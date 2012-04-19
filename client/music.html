@@ -1,0 +1,247 @@
+<head>
+  <title>music</title>
+  <!-- start Mixpanel --><script type="text/javascript">(function(d,c){var a,b,g,e;a=d.createElement("script");a.type="text/javascript";a.async=!0;a.src=("https:"===d.location.protocol?"https:":"http:")+'//api.mixpanel.com/site_media/js/api/mixpanel.2.js';b=d.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b);c._i=[];c.init=function(a,d,f){var b=c;"undefined"!==typeof f?b=c[f]=[]:f="mixpanel";g="disable track track_pageview track_links track_forms register register_once unregister identify name_tag set_config".split(" ");
+  for(e=0;e<g.length;e++)(function(a){b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,0)))}})(g[e]);c._i.push([a,d,f])};window.mixpanel=c})(document,[]);
+  mixpanel.init("f3defaeff80d33ca68306aefdaf94adc");</script><!-- end Mixpanel -->
+</head>
+
+<body>
+  <div class="container-fluid">
+    {{> show}}
+  </div>
+
+  <div class="modal fade" id="info-modal">
+    <div class="modal-header">
+      <a class="close" data-dismiss="modal">×</a>
+      <h2>Danceynous Demo</h2>
+    </div>
+    <div class="modal-body">
+      <h3>Synchronized, YouTube dance party!</h3>
+      <p>Everyone has points that
+      they use to vote on the songs that they want to hear next.  You can skip
+      songs, but that costs even more points</p>
+      
+    </div>
+    <div class="modal-footer">
+      <div id="share-link-area">
+        <h3>Send others the link and make a playlist together:</h3>
+        <input type="text" class="span5" id="share-link">
+      </div>
+      Read more about Danceynous on my <a href="http://vparikh.com">blog</a>
+    </div>
+  </div>
+  
+</body>
+
+<template name="show">
+  <div id="menu-area">
+    {{> menu}}
+  </div>
+  <div id="top-row" class="row-fluid">
+    <div class="span3 full-height">
+      {{#if inRoom}}
+        {{> room}}
+      {{else}}
+        Join a room on left or create one!
+      {{/if}}
+    </div>
+    <div id="player-container" class="span6 full-height">
+      {{> player}}
+    </div>
+    <div class="span3 full-height">
+      {{> chat_room}}
+    </div>
+  </div>
+  <div id="bottom-row" class="row-fluid">
+    <div class="span12">
+      {{> explore}}
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span12">
+      <div id="footer">
+        <a data-toggle="modal" href="#info-modal" id="about-link">About</a>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="menu">
+  <ul class="nav nav-pills">
+    <li class="dropdown active" id="menu1">
+      <a class="dropdown-toggle" data-toggle="dropdown" href="#menu1">
+        Room Info
+        <b class="caret"></b>
+      </a>
+      <ul class="dropdown-menu">
+        <li>{{> room_list}}</li>
+        <li><a href="/"><strong>Create a new room!</strong></a></li>
+      </ul>
+    </li>
+    {{> user_info}}
+  </ul>
+</template>
+
+<template name="user_info">
+  <div id="user-info-container">
+    <input type="text" value="{{user_name}}" id="user-name">
+  </div>
+</template>
+
+<template name="explore">
+  <div class="row-fluid">
+    <div id="search-results" class="span12">
+      {{#each search_results}}
+        {{> result_item}}
+      {{/each}}
+    </div>
+  </div>
+</template>
+
+<template name="result_item">
+    <div class="result-container">
+      <div class="result">
+        <div class="result-popup preview preview-open">?</div>
+        <a class="add" data-ytid="{{id}}">
+          <div class="result-image">
+            <img src="{{thumbnail.sqDefault}}">
+            <span class="duration">{{duration_pp}}</span>
+            <span class="title">{{title}}</span>
+          </div>
+        </a>
+      </div>
+    </div>
+</template>
+
+<template name="preview_frame">
+  <div class="preview-frame">
+    <iframe class="preview-iframe" type="text/html"
+      src="http://www.youtube.com/embed/{{ytid}}?autoplay=1"
+      frameborder="0"/>
+  </div>
+</template>
+
+<template name="room">
+  {{> playlist}}
+</template>
+
+<template name="add_song">
+  <div id="add-container">
+    <a id="popular" class="btn">#popular</a>
+    <input type="text" id="add-song" placeholder="Search for a song">
+    <div class="close">&times;</div>
+  </div>
+</template>
+
+<template name="playlist">
+  <div id="playlist-area">
+    <div id="pl-title"> The Playlist</div>
+    <div id="tokens">{{tokens}} points</div>
+    <div id="vote-buttons" class="unselectable">
+      Click a song to vote: 
+      <a class="btn btn-success upvote">+</a>
+      <a class="btn btn-danger downvote">-</a>
+    </div>
+      <ul id="playlist-list">
+      {{#if has_songs}}
+        {{#each songs}}
+          {{> playlist_item}}
+        {{/each}}
+      </ul>
+    {{else}}
+      <div id="pl-help" class="all-center">
+        Add songs to the playlist using the search box
+      </div>
+    {{/if}}
+  </div>
+</template>
+
+<template name="playlist_item">
+  <li class="playlist-item {{selected}}">
+    {{#if owner}}
+      <a class="remove">&times;</a>
+    {{/if}}
+    <span class="song-score">{{score}}</span>
+    <span class="song-name" title="{{name}}">{{name}}</span>
+  </li>
+</template>
+
+<template name="room_list">
+<!--<div id="room-list-title">All Rooms:</div>-->
+  <ul id="room-list">
+    {{#each rooms}}
+      {{> room_item}}
+    {{/each}}
+  </ul>
+</template>
+
+<template name="room_item">
+  <li class="room-item {{selected}}">
+  <!--<a data-id="{{_id}}">{{name}}({{count}})</a> -->
+    <a data-id="{{_id}}">{{count}} people here</a> 
+    <ul class="room-occupants">
+      {{#each occupants}}
+        {{>room_occupant}}
+      {{/each}}
+    </ul>
+  </li>
+</template>
+
+<template name="room_occupant">
+  <li>{{name}} ({{tokens}})</li>
+</template>
+
+
+
+<template name="create">
+    <div id="create-area">
+      <input type="text" id="new-room-name">
+      <button class="btn large" id="create">Create a dance party</button>
+    </div>
+</template>
+
+<template name="player">
+  <div id="player">
+    <div id="player-bg">
+      {{> player_info}}
+      <div id="ytapiplayer"></div>
+      <span class="duration"><span id="elapsed">x</span>/<span id="duration">x</span></span>
+    </div>
+    {{> add_song}}
+  </div>
+</template>
+
+<template name="player_info">
+<div id="player-info">
+  {{#if playing}}
+    {{play}}
+    <span id="now-playing">Now Playing {{playing}}</span>
+    <a class="btn btn-danger" id="next">Next! ({{next_cost}} points)</a>
+    <a id="mute">Mute</a>
+  {{else}}
+    {{stop}}
+    Search for a song below and add it to the playlist
+  {{/if}}
+</div>
+</template>
+
+<template name="chat_room">
+  <div id="chat-area" class="">
+    <div id="chat-inner">
+      {{#unless chat_messages_count}}
+        <div id="pl-help" class="all-center">
+          This is a chat room.
+        </div>
+      {{else}}
+        {{#each chat_messages}}
+          <div class="chat-message">
+            <div class="name">{{name}}</div>
+            <div class="message">{{message}}</div>
+            {{scroll}}
+          </div>
+        {{/each}}
+      {{/unless}}
+    </div>
+    <input type="text" id="chat-input" placeholder="Type here to chat">
+  </div>
+</template>

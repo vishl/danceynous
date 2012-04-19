@@ -1,0 +1,10 @@
+Danceynous - A synchronized, YouTube dance party using meteor!
+
+You will need meteor, see meteor.com
+You will need the following meteor packages:
+less
+backbone
+underscore
+jquery
+
+After that start the server with "meteor"!
